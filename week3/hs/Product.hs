@@ -2,7 +2,7 @@ module Product where
 
 {- 
 !! this is not meant to be executable; 
-all the more becauseit would conflict 
+all the more because it often conflicts 
 with std Prelude
 -}
 -- p_A
