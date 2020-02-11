@@ -1,0 +1,11 @@
+#!/bin/env bash
+
+case "$1" in
+"3")
+latexmk -pdf -pvc -shell-escape week3;;
+"4")
+latexmk -pdf -pvc -shell-escape week4;;
+"34")
+latexmk -pdf -shell-escape week3
+latexmk -pdf -shell-escape week4;;
+esac

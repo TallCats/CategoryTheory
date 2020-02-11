@@ -1,0 +1,513 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\input{layout/preamble.tex}
+\hypersetup{ linktoc    = all
+           , colorlinks = true
+           , urlcolor   = green!50!black
+           , citecolor  = green!50!black
+           , linkcolor  = green!50!black
+           }
+\author{ Fosco Loregian \\
+  \href{mailto:fouche@yoneda.ninja}
+       {\tt fouche@yoneda.ninja}}
+\date{\today}
+\title{  Category theory course 
+			\\ Lecture 3
+			\\ ITI9200, Spring 2020
+			}
+\setcounter{tocdepth}{2}
+\begin{document}
+
+\maketitle
+\tableofcontents
+\section{Universal properties}
+\subsection{Initial and terminal objects}
+\begin{definition}[Initial and terminal objects]
+	Let $\clC$ be a category.
+	\begin{itemize}
+		\item An object $\varnothing :   \clC_o$ is called \emph{initial} if for every other object $C :   \clC_o$ there is a single morphism $i_C : \varnothing\to C$.
+		\item Dually, an object $1$ is called \emph{final} o \emph{terminal} if for every object $C :   \clC_o$ there is a unique morphism $t_C : C\to 1$.
+	\end{itemize}
+	(Note the substantial difference between `there is \textbf{at most} one morphism' and `there is \textbf{exactly one} morphism'!)
+\end{definition}
+\begin{remark}
+	As a consequence of the definition, if $\varnothing$ is an initial object in $\clC$, then there is a single arrow $i_\varnothing : \varnothing\to \varnothing$, the identity of $\varnothing$. Similarly, if $1$ is terminal, there is a unique arrow $t_1 : 1\to 1$, the identity of $1$; if $\clC$ has both an initial and a terminal object, then there is a unique arrow $z : \varnothing\to 1$; we say that $\clC$ has a \emph{zero} object if $z$ is an isomorphism.
+\end{remark}
+The simple proof of the following statement will enlighten the nature of the notion of universal property. An initial object $\varnothing : \clC$ enjoys what is called a \emph{universal property}:
+\begin{remark}\label{questo}
+	Let $\clC$ be a category with an initial object $\varnothing$. If $\varnothing'$ is another initial object, then there is a unique isomorphism $\varnothing\cong \varnothing'$.
+\end{remark}
+\begin{proof}
+	Assume that there are two initial objects $\varnothing, \varnothing'$; then, by the respective universal properties of $\varnothing$ and $\varnothing'$, there is a unique arrow $u : \varnothing \to \varnothing'$, and similarly a unique arrow $v : \varnothing'\to \varnothing$ (as observed in remark \ref{questo}, there is just one element in $\clC(\varnothing,\varnothing)$, and just one element in $\clC(\varnothing',\varnothing')$). The compositions $v\circ u$ and $u\circ v$ must be the identities of $\varnothing$ and $\varnothing'$ respectively, thus showing that $u,v$ are mutually inverse isomorphisms.
+\end{proof}
+\subsection{Products}
+Consider two sets \(A,B\); the product \(A\times B\) of the two is the set of all pairs
+\[
+	\{(a,b)\mid a : A, b : B\}.
+\]
+It comes equipped with two functions \(p_A : A\times B \to A, p_B : A\times B \to B\),
+\begin{align*}
+	 & p_A \colon A \times B \to A,\quad (x,y) \mapsto x \\
+	 & p_B \colon A \times B \to B,\quad (x,y) \mapsto y
+\end{align*}
+with the property that for every pair of functions \(f : X \to A, g : X \to B\) (\(X\) any set) there is a unique function \((f,g) : X \to A\times B\) such that the equations \(p_A \circ (f,g)=f\) and \(p_B\circ (f,g)=g\) hold; in other words, the diagram
+\begin{equation}
+	\vcenter{\xymatrix{
+			& X \ar[dl]_f \ar[dr]^g \ar@{.>}[d] & \\
+			A & A \times B \ar[l]_{p_A} \ar[r]^{p_B} & B
+		}}
+\end{equation}
+is commutative, when filled with \((f,g) : X \to A\times B\).
+
+Of course, this is not something you don't know: you just gave it a different name until today. Given two types \mil{a,b} you can build the \emph{product type} \mil{(a,b)} with the unique constructor \mil{(,)} that coheres the pair \mil{a,b} into a single type, and the two functions
+\begin{minted}{haskell}
+-- p_A
+fst :: (a,b) -> a
+fst (x,_) =  x
+-- p_B
+snd :: (a,b) -> b
+snd (_,y) = y
+\end{minted}
+What does the above universal property really say though is that the two sets
+\begin{equation}
+	{\sf Set}(X, A)\times {\sf Set}(X,B),\quad {\sf Set}(X, A\times B)
+\end{equation}
+are in bijection:
+\begin{itemize}
+	\item define a function $${\sf Set}(X, A)\times {\sf Set}(X,B)\to {\sf Set}(X, A\times B)$$ sending a pair $(f,g)$ into the function $(f,g) : X \to A\times B$ defined by $x\mapsto (fx, gx)$;
+	\item define a function in the opposite direction: $${\sf Set}(X, A\times B) \to{\sf Set}(X, A)\times {\sf Set}(X,B);$$ each function $u : X\to A\times B$ goes to the pair of functions $(\pi_A\circ u, \pi_B\circ u)$.
+\end{itemize}
+It is evident that the composition of these two functions is the identity both ways, and this proves the result.
+
+If you're more familiar with Haskell-ish notation, the result can be restated as follows: the two types \mil{( x -> a, x -> b )} and \mil{x -> ( a,b )} are isomorphic.\footnote{A word of explanation is in order: there is no truly satisfying way of proving the isomorphism in Haskell; we can however explicitly define functions
+\[
+	f : {\sf Set}(X, A)\times {\sf Set}(X,B)\leftrightarrows {\sf Set}(X, A\times B) : g
+\]
+and ``prove'' for example through \texttt{QuickCheck} that they are mutually inverse, i.e. that the two compositions \mil{f . g} and \mil{g . f} are the identity function \mil{id a = a}. Do it, it'll be a good way to spend an afternoon meditating on this remark!} In \verb|Control.Arrow| there is the function
+\begin{minted}{haskell}
+(&&&) :: (a -> b) -> (a -> c) -> a -> (b, c)
+\end{minted}
+and the isomorphism is realised just by sending \mil{f g} to \mil{&&& f g}.
+\begin{definition}
+	Let $\clC$ be a category, and $A,B : \clC$ be objects; the \emph{product} $A\times B : \clC$ is a third object such that the universal property expressed in diagram \eqref{prodUP} holds true: for every pair of morphisms $f : X \to A, g : X \to B$, there is a \emph{unique} $(fg) : X \to A\times B$ such that the diagram commutes. In other words, there is a bijection of sets (even if $X,A,B$ are not sets!)
+	\[
+		\clC(X, A)\times \clC(X,B),\quad \clC(X, A\times B)
+	\]
+	like the one in \eqref{isocano}.
+\end{definition}
+Examples of products in various categories of interest:
+\begin{itemize}
+	\item in the category of sets and functions, the product of two sets is their \emph{cartesian product}: its elements are the ordered pairs of elements $(a,b)$, the first in $A$ and the second in $B$.
+	\item in the category of monoids and monoid homomorphisms: given two monoids $M,N$, we define a monoid structure on the cartesian product of their underlying sets by
+	      \[
+		      (a,b) \cdot (c,d) := (a \cdot_M c, b\cdot_N d)
+				\] the associative and unital properties are easily checked.
+% 				\footnote{As an aside remark, note that this property is easily expressed on the \mil{(,)} constructor, giving to \mil{(a,b)} an instance of \mil{Monoid}:
+% 	      \begin{minted}{haskell}
+% instance (Monoid a, Monoid b) => Monoid (a,b) where
+%   (<>) ( a,a' ) ( b,b' ) = ( a <> a', b <> b' )
+% \end{minted}
+% abc}
+	\item in \emph{a} partially ordered set $P$, regarded as a category, the definition of product acquires the following form:
+	      \begin{quote}
+		      Given two elements $p,q : P$, there is an element $z = pq$ such that whenever $x\le p,q$, then $x\le pq$.
+	      \end{quote}
+	      Of course, this means that $pq$ is the max element with the property of being less than both $p,q$: this means that a product for $p,q : P$ is a \emph{meet}, or \emph{infimum}, of $p,q$.
+	\item In \emph{the category of} partially ordered sets things are less straightforward but also more interesting. Let $f : X \to A$ and $g : X \to B$ two monotone functions; in order to show that the product $A\times B$ is the cartesian product of sets $A\times B$, endowed with the partial order relation $(a,b)\le (a',b') \iff a \le_A a',\, b\le_B b'$, we shall show that the unique function $(f,g) : X \to A\times B$ is monotone with respect to this order. This is, however, straightforward: let $x\le x'$; then $fx\le_A fx'$, because $f$ is monotone, and $gx\le_B gx'$, because $g$ is monotone.
+	\item Let ${\sf Set}_*$ be the category of pointed sets, i.e. of pairs $(A,a :A)$; let $(A,a), (B,b)$ two sets. The product $(A\times B, (a,b))$ has the universal property of the product in pointed sets.
+	\item in the category of graphs: a \emph{graph} is a pair of sets $E,V$ such that $E\subseteq \binom{V}{2}$ is a subset of the set of two-element subsets of $V$: each element $e=\{v,v'\}$ of $E$ is an \emph{edge} of the graph connecting the two vertices $v,v'$.
+	      \begin{itemize}
+		      \item The \emph{box product} of two graphs has the set $V_G\times V_{G'}$ as set of vertices, and there is an edge connecting $(v_1,v_1')$ and $(v_2,v_2')$ if and only if $v_1=v_2$ and $\{v_1',v_2'\} :  E_{G'}$ or $\{v_1,v_2\} :  E_G$ and $v_1'=v_2'$.
+		      \item The \emph{tensor product} of two graphs has the set $V_G\times V_{G'}$ as set of vertices, and there is an edge connecting $(v_1,v_1')$ and $(v_2,v_2')$ if and only if there is an edge connecting $v_1,v_2$ and an edge connecting $v_1',v_2'$.
+	      \end{itemize}
+	      It is easy to see that \(G \mathbin{\square} G'\not\cong G\otimes G'\): the two constructions are not isomorphic;\footnote{Draw a picture: let $\xymatrix@M=1pt@C=4mm{  0 \ar@{-}[r]& 1 }$ be the graph having two vertices $0,1$ connected by a single edge; show that $\left(\xymatrix@M=1pt@C=4mm{  0 \ar@{-}[r]& 1 }\right)^{\square 2} \not\cong \left(\xymatrix@M=1pt@C=4mm{  0 \ar@{-}[r]& 1 }\right)^{\otimes 2}$.} only the second construction has the universal property of the product in the category \({\sf Gph}\) of graphs and graph homomorphisms.
+\end{itemize}
+The following is a useful lemma:
+\begin{lemma}
+	Let $\clC$ be a category, and let $u,v : T \to X\times Y$ two parallel morphisms between objects $T, X\times Y : \clC$ (in particular, we assume that $X\times Y$ exists, and we let $p_X,p_Y : X\times Y\to X,Y$ be the product projections). Then $u=v$ if and only if
+	\begin{equation*}
+		\begin{cases}
+			p_X \circ u = p_X \circ v \\
+			p_Y \circ u = p_Y \circ v
+		\end{cases}
+	\end{equation*}
+\end{lemma}
+\begin{proof}
+	One direction of the implication is obvious: composition on the left and on the right is a \emph{congruence}, so if $u=v$, a fortiori $p_Xu=p_Xv$, and $p_Yu=p_Yv$. 
+	
+	If the post-compositions with the projections are the same, though, then both $u$ and $v$ must have the universal property for the same map $\smat{p_Xu\\p_Yu}$. Or, to put it another way, the function $u\mapsto (p_Xu,p_Yu)$ is bijective, hence injective: this means that if $p_Xu=p_Xv$, and $p_Yu=p_Yv$, i.e. if the pairs $(p_Xu,p_Yu)$ and $(p_Xv,p_Yv)$ are equal, then $u=v$.
+\end{proof}
+\begin{theorem}
+	Let $\clC$ be a category, $f : A \to A', g : B\to B'$ two morphisms; assume that $A\times B, A'\times B'$ both exist. Then the square
+	\[
+		\vcenter{\xymatrix{
+				A\times B\ar[d]_{A\times g}\ar[r]^{f\times B} & A^\prime\times B \ar[d]^{A^\prime\times g}\\
+				A\times B^\prime \ar[r]_{f\times B^\prime}& A^\prime\times B^\prime
+			}}
+	\]
+	commutes.
+\end{theorem}
+\begin{notation}
+We define \(f\times g\) to be either the \(\urcorner\) side, or the \(\llcorner\) side of the above square. To put it another way, the diagonal of the square above is well-defined as it does not change whatever path we choose from north-west to south-east; we call such diagonal $f\times g : A\times B \to A'\times B'$. 
+\end{notation}
+\begin{proof}
+	In order to prove that the square commutes, according to the Lemma just stated, we just have to post-compose the $\urcorner$ side of the diagram with the $\llcorner$ side of the diagram:
+	\begin{align*}
+		p_{A'} \circ (A'\times g) \circ (f\times B) & = p_{A'} \circ (f\times B) = f      \\
+		p_{A'} \circ (f\times B') \circ (A\times g) & = f \circ p_A \circ (A\times g) = f \\
+		p_{B'}\circ (A'\times g)\circ (f\times B)   & = g\circ p_B \circ (f\times B) =g   \\
+		p_{B'}\circ (f\times B')\circ (A\times g)   & = p_{B'}\circ (A\times g) = g.
+	\end{align*}
+	(the notation is based on a slight, innocuous, abuse.)
+\end{proof}
+\subsection{Coproducts}
+Consider now two sets \(A,B\); their \emph{disjoint sum} or \emph{coproduct} is the set \(A\coprod B\) made of two non-intersecting copies of \(A,B\).\footnote{More formally, the set \(A\coprod B\) is defined as the set of all pairs \((a,\jap{陰}),(\jap{陽},b)\), or \((a, \text{yin})\) and \((\text{yang},b)\), or \mil{Left a} and \mil{Right b}, as \(a,b\) run over the elements (\ldots{}terms?) of \(A,B\).} The set \(A\coprod B\) comes equipped with canonical injections \(i_A : A \to A\coprod B\) and \(i_B : B\to A\coprod B\)
+
+Now, a function \(f : A\coprod B\to X\) is completely determined by its compositions with the injections \(i_A,i_B\), in the sense that for every other set \(X\) and pair of functions \(f : A\to X\) and \(g : B\to X\) there is a unique function \(\left[\begin{smallmatrix} f\\g \end{smallmatrix}\right] : A\coprod B \to X\) such that the diagram
+\[
+	\xymatrix{
+		&X& \\
+		A \ar[r]_{i_A}\ar[ur]^f & A\coprod B \ar@{.>}[u] & B\ar[l]^{i_B}\ar[ul]_g
+	}
+\]
+is commutative when \(\left[\begin{smallmatrix} f\\g \end{smallmatrix}\right] : A\coprod B \to X\) fills the dotted arrow.
+
+This translates into the bijection of sets
+\[\textstyle
+	\clC(A\coprod B,X) \cong {\sf Set}(A,X)\times {\sf Set}(B,X)
+\]
+The attentive reader might have noted that this isomorphism is completely dual to the one for products proved above; sure this is not accidental: also the proof of the statement is completely analogous -but dual- to the one for products. The tight relation between the two constructions will become clear along the discussion about limits and colimits as dual constructions.
+
+In \verb|Haskell|, the isomorphism of types we have to prove is
+\begin{minted}{haskell}
+( a -> x, b -> x ) ~ ( Either a b -> x )
+\end{minted}
+Such an isomorphism is realised by the function
+\begin{minted}{haskell}
+either :: (a -> x) -> (b -> x) -> Either a b -> x
+either f _ (Left a) = f a
+either _ g (Right b) = g b
+\end{minted}
+and the isomorphism above can be realised as \mil{f,g} \(\mapsto\) \mil{either f g}.
+
+Examples of coproducts:
+\begin{itemize}
+	\item in the category of sets, the coproduct of $A,B$ is made by joining one copy of $A$ ``at level 0'' and a copy of $B$ ``at level 1'' (this seemingly artificial definition is instead the only way to prevent $A,B$ from intersecting in the disjoint sum); the universal property of $A\coprod B$ has been fleshed out in the previous paragraphs.
+	\item in many categories, like spaces and graphs, coproducts are ``easy'': it is enough to join disjoint copies of object \(A\) and object \(B\), consider the set-theoretic embeddings $A , B \hookrightarrow A\coprod B$, and this will turn out to have the correct universal property (make examples).
+	\item in the category of vector spaces, given two vector spaces $V,W$ their coproduct is called \emph{direct sum}: it is the vector space whose elements are pairs $(v,w)$ of vectors and whose operations are defined component-wise. Fun fact: this object has the same universal property as the product $V\times W$ (prove it!), so we are given not only injections $i_V,i_W : V,W\to V\oplus W$ sending $v$ to $(v,0)$ and $w$ to $(0,w)$, but also projections $p_V,p_W : V\oplus W \to V,W$. Of course, $p_Vi_W=0=p_Wi_V$, etc.\footnote{The same is true for any \emph{finite} sum of vector spaces, but not for infinite sums.}
+	\item the same happens in the category of abelian groups.
+\end{itemize}
+According to the ``two theorems at the price of one'' philosophy, we get dual versions of Lemma \ref{} and Theorem \ref{}:
+\begin{lemma}
+	Let $\clC$ be a category, and let $u,v : X\sqcup Y \to T$ two parallel morphisms between objects $T, X\sqcup Y : \clC$ (in particular, we assume that $X\sqcup Y$ exists, and we let $i_X,i_Y : X,Y\to X\sqcup Y$ be the coproduct injections). Then $u=v$ if and only if
+	\begin{equation*}
+		\begin{cases}
+			u \circ i_X= v\circ i_X \\
+			 u\circ i_Y =  v\circ i_Y
+		\end{cases}
+	\end{equation*}
+\end{lemma}
+\begin{theorem}
+	Let $\clC$ be a category, $f : A \to A', g : B\to B'$ two morphisms; assume that $A\sqcup B, A'\sqcup B'$ both exist. Then the square
+	\[
+		\vcenter{\xymatrix{
+				A\sqcup B\ar[d]_{A\sqcup g}\ar[r]^{f\sqcup B} & A^\prime\sqcup B \ar[d]^{A^\prime\sqcup g}\\
+				A\sqcup B^\prime \ar[r]_{f\sqcup B^\prime}& A^\prime\sqcup B^\prime
+			}}
+	\]
+	commutes.
+\end{theorem}
+\subsection{Natural numbers}
+
+
+Consider the following type declaration:
+\begin{minted}{haskell}
+data N = Z
+       | Suc N
+       deriving (Eq, Show)
+\end{minted}
+that defines the type of natural numbers; consider also the \mil{plus} function
+\begin{minted}{haskell}
+plus :: N -> N -> N
+plus Z n = n
+plus (Suc m) n = Suc (plus m n)
+\end{minted}
+If you fire up \verb|ghci|, and type \verb|(Suc Z) `plus` (Suc Z)|, you pray the Haskell gods and you wait some time, you shall see
+\begin{minted}{bash}
+Prelude> (Suc Z) `plus` (Suc Z)
+      => Suc (Suc Z)
+\end{minted}
+So far so good. But what happened \emph{exactly}? It turns out that the function \mil{Suc :: N -> N} is ``defined inductively'' in such a way that from a base definition we can go back and back until we hit the base case of a recurrence.
+
+The same happens for the function \mil{_+n :: N -> N}: we can pattern-match from the base case \mil{Z + n} to define
+\begin{minted}{haskell}
+(Suc Z) + n = Suc (Z + n) = Suc n
+(Suc (Suc Z)) + n = Suc ((Suc Z) + n) = Suc (Suc n)
+\end{minted}
+etc. Of course, this is nothing more nothing less than \emph{induction principle} à la Peano: here we want to characterise this property using the language of category theory; we will come to a pretty neat description of what natural numbers, and inductive definition, really are.
+\subsubsection{Dynamical systems, and \(\bfN\)}
+
+Define a category \(\textsf{Dyn}\) whose objects are triples \((X, t : X \to X,x : X)\), i.e. diagrams
+\[
+	\xymatrix{
+		1 \ar[r]^x & X \ar[r]^t & X
+	}
+\]
+and morphisms between \((X,t,x)\) and \((Y,g,y)\) consist of functions \(u : X \to Y\) such that \(u(x)=y\) and \(u\circ t=g\circ u\), i.e. of commutative diagrams
+\[
+	\xymatrix{
+		1 \ar[r]^x\ar@{=}[d] & X\ar[r]^t\ar[d]_u & X \ar[d]^u \\
+		1 \ar[r]_y & Y \ar[r]_g & Y
+	}
+\]
+The object \(\mathbf{N}=(\mathbb{N}, \text{s} : \mathbb N \to \mathbb N, 0 : \mathbb N)\), or rather the type \mil{N} of the type declaration above, belongs to this category if we let \(\text{s}\) be the function \mil{Suc :: N -> N} sending a natural number to its successor.
+
+Let \(\mathbf{X} = (X,t,x)\) be any object of \(\sf Dyn\); then, there is an arrow \(u : \mathbf N \to\mathbf X\) in \(\sf Dyn\) such that\footnote{This means that given an initial value \(u(0)=x\) and any endomorphism of the set $X$, there is a unique possible way to define a sequence of element \(u(n)\) of $X$ recursively, by setting \(u(0) = x\) and $u(n+1) = t(u(n))$.}
+\[
+	\xymatrix{
+	1 \ar@{=}[d] \ar[r]^z & \bbN \ar[r]^{\text{s}} \ar[d]^u & \bbN \ar[d]^u \\
+	1 \ar[r]_x & X \ar[r]_t & X
+	}
+\]
+and such a function \(u\) is \emph{unique} with respect to this property;\footnote{If there is another sequence $v : \mathbb N \to X$ with the same property, the equality of $u,v$ can be assessed ``by induction'' using $t$: $u(0)=v(0)=x$, and $u(n+1)=t(u(n))=t(v_n)=v(n+1)$.} this means precisely that \(\bfN\) is an \emph{initial object} of the category \(\textsf{Dyn}\).
+
+The category \(\sf Dyn\) models the notion of a \emph{dynamical system}: a set \(X\) and an initial state \(x : X\) are given, together with a function \(t : X \to X\) mapping \emph{evolution} of the system in discrete time, according to the function \(t\).\footnote{The dynamical system determined by \(t : X \to X\) consists of the iterates
+\[
+	u_n(x)=\{ t^n(x) \mid n  : \mathbb N\}.
+\]
+The system lends itself to all sorts of questions: is there a fixed point for \(u_n(x)\)? Does the limit of \(u_n(x)\) belong to \(X\) (not obvious: consider \(X=[0,1[\) and \(u_n(x)\equiv 1-\frac{1}{n}\))? Is \(u_n(x)\) continuous in \(x\)? Etc.}
+
+Also, as you might expect, examples of such systems abound:
+
+\begin{itemize}
+	\item The \emph{product} function,
+\begin{minted}{haskell}
+prod :: N -> N -> N
+prod Z n = Z
+prod (Suc m) n = n `plus` (m `prod` n)
+\end{minted}
+that employs recursion to define \((m+1)\times n = m\times n + n\), and the power function
+\begin{minted}{haskell}
+powe :: N -> N -> N
+powe Z _ = Z
+powe m Z = Suc Z
+powe m (Suc n) = prod (powe m n) m
+\end{minted}
+	\item The \emph{Ackermann function}:
+\begin{minted}{haskell}
+ackr :: N -> N -> N
+ackr Z n = plus (Suc Z) n
+ackr (Suc m) Z = ackr m (Suc Z)
+ackr (Suc m) (Suc n) = ackr m (ackr (Suc m) n)
+\end{minted}
+(do not compute \mil{ackr 4 4} unless you \emph{really} need it!).
+
+The request that in \(\sf Dyn\) there is a morphism \(u : \bf N\to \bf X\) means that we can find a function \(u\ : \mathbb N \to X\) such that
+\[
+	\xymatrix{
+	1 \ar@{=}[d] \ar[r]^z & \bbN \ar[r]^{\text{s}} \ar[d]^u & \bbN \ar[d]^u \\
+	1 \ar[r]_x & X \ar[r]_t & X
+	}
+\]
+This condition says that if \(u\) exists, it is unique because it is recursively defined using \(t\) and its iterates: if \(u(\text{s}(n))=t(u(n))\), this means that \(u_{n+1}\) is forced to be =  \(t(u_n)\), and considering \(u\) as a sequence \(\{u_n\}_{n :\mathbb N}\) of elements of \(X\) it suffices to specify its value at zero to get that
+\begin{equation*}
+	\begin{cases}
+		u_1 & = t(u_0)             \\
+		u_2 & = t(u_1) = t(t(u_0)) \\
+		u_3 & = t(t(t(u_0)))       \\
+		    & \vdots
+	\end{cases}
+\end{equation*}
+\end{itemize}
+Is there an implementation for the iterates of \(t\) to the element \(x : X\)? But of course there is! The \mil{iterate} function.
+\begin{minted}{haskell}
+iterate :: (a -> a) -> a -> [a]
+iterate t x = x : iterate t (t x)
+\end{minted}
+whose output is exactly the (infinite) list \mil{[x, t x, t t x, t t t x, ...]}.
+\subsection{Diagram chasing}
+The definition of products and coproducts allows for more than a finite number of factors/summands: a tuple $A_1,\dots,A_n$ of sets, or objects of $\clC$, can be arranged in a \emph{product}
+\[
+A_1 \times \cdots \times A_n
+\]
+It turns out that all the sets obtained from a parenthesisation $\fkP$ of an $n$-tuple of objects $[A_1,\dots,A_n]_\fkP$ are isomorphic: the function $[A_1,\dots, A_n]_\fkP \to [A_1,\dots, A_n]_\fkQ$ that sends $(a_1,\dots, a_n)_\fkP$ to $(a_1,\dots, a_n)_\fkQ$ is a bijection, whose inverse just ``rearranges'' brackets. This just means, for example, that the element
+\[(a,(b,c),d)\]
+and the element
+\[(a,(b,(c,d)))\]
+correspond each other in a bijection $A\times (B\times C)\times D \to A\times (B\times (C\times D))$.
+
+In a category-theoretic perspective, it is however quite unpleasant to refer to the ``elements'' of an object: oftentimes, there is no such concept available (for example: let $P$ be a poset regarded as a category; what are the ``elements'' of $p : P$? And yet, $p\land q = q\land p$).
+
+Establishing such a result uses a form of induction on the length of the tuple, and it turns out that in order to prove that the operation of categorical product and coproduct are ``coherently associative'', i.e. that every two different bracketing are canonically isomorphic, it is enough to prove the case $n=3$, i.e. that the objects \(A\times (B\times C)\) and \((A\times B)\times C\), formally defined in two different ways, satisfy the same universal property: joining the universal property that define \(B\times C\) and \(A\times B\) we will conclude.
+
+So, we are in the following situation: $A,B,C : \clC$ are three objects of a category; the products $(A\times B)\times C, A\times (B\times C)$ all exist. We want to show that \(A\times (B\times C)\) and \((A\times B)\times C\) have the same universal property. In order to do so, we consider a diagram like
+\renewcommand{\objectstyle}{\scriptstyle}
+\[  \xymatrix{
+	 (A\times B)\times C\ar[dd] \ar@/^1pc/[drrr]\\
+	& A\times (B\times C) \ar[dd]^(.25){p_A}\ar[r]^-{p_{B\times C}} \ar@{.>}[dl]|{(p_A,p'_Bp_{B\times C})}\ar@{.>}[ul] & B\times C\ar[dd]^{p'_B}\ar[r]_{p'_C} & C \\
+	A\times B \ar[dr]\ar@/^1pc/[drr]& \\
+	& A & B
+	}\]
+ \renewcommand{\objectstyle}{\textstyle}
+ Each of these functions is a projection on a factor; now, \(p_A\) and \(p'_B\circ p_{B\times C}\) give a unique function \(q_{A\times B}=(p_A,p'_B\circ p_{B\times C}) : A\times (B\times C)\to A\times B\) that paired with the composition \(q_C : A\times (B\times C)\to B\times C \to C\) yields a unique function \(u = (q_{A\times B}, q_C) : A\times (B\times C) \to (A\times B)\times C\) commuting with the projections on the factors.
+
+A similar argument yields a unique \(v : A\times (B\times C) \leftarrow (A\times B)\times C\), commuting with the projection on the factors; uniqueness now implies that there is no other choice for the functions
+\[\xymatrix{(A\times B)\times C \ar[r]^v & A\times (B\times C)\ar[r]^u & (A\times B)\times C}\]
+and
+\[\xymatrix{A\times (B\times C) \ar[r]^u & (A\times B)\times C \ar[r]^v & A\times (B\times C)}\]
+other than the identity of $(A\times B)\times C$ and of $A\times (B\times C)$.
+
+What about commutativity of cartesian products? This is proved in the exact same way, but with a shorter construction for the two mutual inverses maps: \(A\times B \xrightarrow{\smat{p_B\\p_A}} B\times A\) yields a symmetry function, whose inverse is \(B\times A \xrightarrow{\smat{p_A\\p_B}} A\times B\). So, \(A\times B\) and \(B\times A\) are naturally isomorphic.
+\subsection{Free objects}
+Let $X$ be any set; let us consider the set of all almost-everywhere-zero\footnote{This means that the \emph{support} of $f$, i.e. the set ${\sf sup}(f)=\{x :  X\mid f(x)\neq 0\}$ is finite.} functions $f : X \to \mathbb Z$ endowed with the sum operation
+\[
+f+g : X \to \mathbb Z : x \mapsto f(x)+g(x).
+\]
+It is easily seen that this set is an abelian group, with identity element the function constantly zero.
+
+This set is called the \emph{free group} on the set $X$.
+The free group on a set $X$ s endowed with a canonical map $\delta : X \to \mathbb Z(X) : x\mapsto \delta_x$: $\delta_x(y)=1$ if $x=y$, and 0 otherwise.
+
+The free group on a set $X$ enjoys the following universal property:
+\begin{quote}
+  For every function of sets $h : X \to G$, where $\mathbb G = (G,+,0)$ is an abelian group, there is a unique extension of $h$ to a group homomorphism $\bar h : \mathbb Z(X) \to \mathbb G$ such that the triangle
+\[\vcenter{\xymatrix{
+&X\ar[dr]^h\ar[dl]_\delta &\\
+\mathbb Z(X) \ar@{.>}[rr]_{\bar h}&& \mathbb G
+}}\]
+is commutative.
+\end{quote}
+In order to prove the property, let us argue this way: let $h : X \to G$ be a function of sets; by the request that $\bar h \circ\delta=h$ it is evident that we have to define $\bar h(\delta_x) = h(x)$. But then, $\bar h$ is uniquely determined by this condition: observe that every element in $\mathbb Z(X)$ results as a finite sum $f = \sum_{x : {\sf sup}(f)} f(x)\delta_x$, and since $\bar h$ has to be a group homomorphisms,
+\[\textstyle
+\bar h(f) = \bar h\left( \sum_{x : {\sf sup}(f)} f(x)\delta_x\right)	= \sum_{x : {\sf sup}(f)} f(x)h(x).
+\]
+A similar property can be stated to obtain \emph{free objects} of all sorts:
+\begin{itemize}
+	\item For every set $X$ there is a \emph{free monoid} on $X$ obtained as the set of all finite strings over the set $X$,\footnote{This means that we consider the set $X^* := \coprod_{n \ge 0}X^{\times n}$, i.e. the disjoint union $\{()\}\sqcup X \sqcup (X\times X)\sqcup \cdots\sqcup (X\times\cdots \times X) \sqcup\cdots$.} with string concatenation $x_n  :  X^{\times n}, y_m : X^{\times m} \mapsto (x.y)_{n+m}$ as operation, the empty string as identity element. The free monoid on a set $X$ enjoys the following universal property:
+	\begin{quote}
+		For every function of sets $h : X \to M$, where $\mathbb M = (M,\cdot,1)$ is a monoid, there is a unique extension of $h$ to a monoid homomorphism $\bar h : FX \to \mathbb M$ such that the triangle
+	\[\vcenter{\xymatrix{
+	&X\ar[dr]^h\ar[dl]_\delta &\\
+	FX \ar@{.>}[rr]_{\bar h}&& \mathbb M
+	}}\]
+	is commutative.
+	\end{quote}
+	\item For every set $X$ there is a \emph{free group} on $X$ obtained as the free monoid over $X\sqcup \bar X$ ($\bar X$ is a copy of $X$ containing all formal inverses of elements of $X$), where words have been further reduced according to the rule $x\bar x \rightsquigarrow (), \bar xx \rightsquigarrow ()$. The free monoid on a set $X$ enjoys the following universal property:
+	\begin{quote}
+		For every function of sets $h : X \to G$, where $\mathbb G = (G,\cdot,1)$ is a group, there is a unique extension of $h$ to a group homomorphism $\bar h : FX \to \mathbb G$ such that the triangle
+	\[\vcenter{\xymatrix{
+	&X\ar[dr]^h\ar[dl]_\delta &\\
+	FX \ar@{.>}[rr]_{\bar h}&& \mathbb G
+	}}\]
+	is commutative.
+	\end{quote}
+	\item Let $G$ be a directed graph (it means that the set $E(G)$ of edges of $G$ is an \emph{ordered} pair). The \emph{free category} $CG$ on $G$ consists of the category having the set of vertices of $G$ as objects, and where the morphisms are freely generated by the set of edges. This means that we recursively define a category as follows:
+	\begin{itemize}
+		\item There is a morphism $()_u : u\to u$;
+		\item There is a morphism $e : u\to v$ for every $e=(u,v) :  E(G)$;
+		\item Whenever there is a morphism $f : u\to v$ and a morphism $g : v\to w$, there is a morphism $g\odot f : u\to w$, (wicked souls also write $f;g : u \to w$).
+	\end{itemize}
+	Of course, $()_u$ plays the r\^ole of the identity arrow, and all this is just a convoluted way to assert that the morphisms of $CG$ are the free partial\footnote{This just means that not all elements of the ``monoid'' can be composed: the product function $\odot : M \times M \to M$ is only partially defined on a domain $(M\times M)_\circ \subseteq M\times M$ of ``composable'' elements/arrows.} monoid on the set of edges of $G$; try to formalize properly this assertion. (Recall how you define \mil{String a = [a]}:
+	\begin{minted}{haskell}
+[] :: [a]
+(:) :: a -> [a] -> [a]
+: x ys :: [a]
+	\end{minted}
+	This is an inductive definition for the free monoid on the set/type $X$, i.e. for the monoid $X^*$ above.)
+	\item The free graph on a set $X$ has $X$ as set of vertices, and te empty set as set of edges.
+\end{itemize}
+\subsection{Universal property as initiality}
+The above heuristics suggest that we can informally state the property of ``being universal'' for an object of a category \(\clA\) as the property of being initial or terminal in some category $\tilde{\clA}$ obtained starting from $\clA$ (often, there is an explicit procedure to build $\tilde{\clA}$ out of $\clA$):
+\begin{itemize}
+	\item the product \(A\times B=\) \mil{(a,b)} of two types \mil{a}, \mil{b} is the terminal object in the category of all pairs $_{A\langle}\clA_{\rangle B}$ whose objects are ``spans'' $A \overset{a}\leftarrow X \overset{b}\to B$, and whose morphisms $u : (a,b)\mapsto (a',b')$ are $u : X \to X'$ such that $a'u=a, b'u=b$.
+	\item the coproduct \(A\coprod B=\) \mil{Either a b} of two types \mil{a}, \mil{b} is the initial object in the category of all pairs $_{A\rangle}\clA_{\langle B}$ whose objects are ``cospans'' $A \overset{a}\to X \overset{b}\leftarrow B$, and whose morphisms $u : (a,b)\mapsto (a',b')$ are $u : X \to X'$ such that $ua = a', ub=b'$.
+	\item the set of natural numbers is the initial object of the category \(\sf Dyn\) defined as above;
+	\item the free monoid on a set $X$ is the initial object in the category whose objects are functions $u : X\to M$, where $M$ is the underlying set of a monoid $\bbM = (M,\cdot,1)$, and morphisms are the monoid homomorphisms $f : N\to M$ such that
+	\[
+		\vcenter{\xymatrix{
+			&X\ar[dl]_u\ar[dr]^v & \\
+			UN \ar[rr]_{Uf} && UM
+		}}
+	\]
+	is a commutative triangle.
+	\item the free (abelian) group on a set, the free category on a set, etc. all enjoy similar universal properties: the free thingummy on a set $X$ is the initial object in the category whose objects are functions $u : X\to T$, where $T=U\bbT$ is the underlying set of a thingummy $\bbT = (T,\#,\rhd,\dots,\text{\Denarius})$, and morphisms $\smat{X\\\downarrow\\U\bbS}\to \smat{X\\\downarrow\\ U\bbT}$ are the thingummy homomorphisms $f : S\to T$ such that
+	\[
+		\vcenter{\xymatrix{
+			&X\ar[dl]_u\ar[dr]^v & \\
+			U\bbS \ar[rr]_{Uf} && U\bbT
+		}}
+	\]
+\end{itemize}
+If we call a structure \emph{free} when it exhibits no relations, i.e. it can be presented by a set of formal operations of some sort (addition, concatenation, composition of arrows\dots) without the request that these operations satisfy any kind of binding equation, we see that the notion of freeness admits a neat categorical formalisation: whenever a set can be endowed with one or more operations, we can build a correspondence
+\[\xymatrix@R=0cm{ U : {\sf Thng} \ar[r] & {\sf Set} \\
+  \bbT \ar@{|->}[r] & U\bbT}\]
+that forgets the presence of operations on a thingummy $\bbT = (T,\dots)$; think of a thingummy as a Christmas tree with bells and whistles. The correspondence $U$ removes all the decorations from a tree $\bbT$, and leaves the bare \textbf{u}nderlying set $T$.
+
+In the opposite direction, we can think of a constructive algorithm that exhibits the free thingummy on a set $X$; this is a correspondence
+\[\xymatrix@R=0cm{ F : {\sf Set} \ar[r] & {\sf Thng} \\
+X \ar@{|->}[r] & FX}\]
+exhibiting the \textbf{f}ree thingummy generated by recursively considering elements $x,y : X$, formal composites $x \rhd y$ for each operation $\rhd$ that defines the thingummy, and formal composites $u \rhd w$ for each operation $\rhd$ that defines the thingummy structure, and each element obtained at the preceding step.
+
+Such constructions are examples of \emph{functors}. We will investigate their properties in the following lecture.
+\subsubsection{Exercises}
+Exercises denoted with a star symbol are supposed to be difficult. Don't be put off, and enjoy!
+
+\footnotesize
+\begin{enumerate}
+	\item Let $\clC=(\mathbb N, \ge)$ be the category having objects the natural numbers $0,1,2,\dots$ and where there is a morphism $m\to n$ if and only if $n\le m$. Does $\clC$ have a terminal object? Does it have an initial object? Does it have products $n\times m$? Does it have coproducts $n\sqcup m$? Answer the same four questions for the category $\clD=(\mathbb N, \_\mid\_)$, that has the same objects and where there is a morphism $n\to m$ if and only if $m = kn$ for some $k\in\mathbb N$ (the relation $n\mid m$ reads as ``$n$ divides $m$'').
+
+	\item Let \(1\) be the set with a single element; consider the correspondence that sends a set \(A\) into \(A\sqcup 1\), i.e. to the coproduct of \(A\) and \(1\). Show that the following diagrams commute:
+	      \[ \vcenter{\xymatrix{
+				      1\sqcup 1\sqcup 1\ar[r]^{1\sqcup \fold}\ar[d]_{\fold \sqcup 1} & 1\sqcup 1\ar[d]^{\fold} \\
+				      1\sqcup 1\ar[r]_{\fold}& 1
+			      }} \]
+	      where \(\fold : 1 \sqcup 1\to 1\) is the function \(\left[\begin{smallmatrix} \text{id}_1 \\ \text{id}_1 \end{smallmatrix}\right]\). As a consequence, the diagram
+	      \[ \vcenter{\xymatrix{
+				      A\sqcup 1\sqcup 1\sqcup 1\ar[r]^{1\sqcup \fold}\ar[d]_{\fold \sqcup 1} & A\sqcup 1\sqcup 1\ar[d]^{\fold} \\
+				      A\sqcup 1\sqcup 1\ar[r]_{\fold}& A\sqcup 1
+			      }} \]
+	      remains commutative.
+
+	      Show that the set of functions \(a : A\sqcup 1\to A\) such that the following diagrams commute
+	      \[
+		      \vcenter{\xymatrix{
+				      A \ar[r]^{i_A}\ar@{=}[dr]& A \sqcup 1 \ar[d]^a & A\sqcup 1\sqcup 1\ar[r]^{A\sqcup\fold}\ar[d]_{a\sqcup 1} & A\sqcup 1\ar[d]^a \\
+				      & A & A\sqcup 1\ar[r]_a & A
+			      }} \]
+				is in bijection with the elements of \(A\); namely, each such \(a : A\sqcup 1 \to A\) determines a unique element \(a_0 : A\).
+  \item You have defined the free monoid $FX$ and the free category $CX$ on a set $X$. Prove that the two constructions agree when a monoid $M$ is regarded as a category with a single object. [Hint (highlight the following lines on a pdf viewer): {\color{white} the category associated to a monoid $M$ has a single object \jap{陰}, and $M$ as set of endo-arrows of \jap{陰}; given a set, what is the free category on a graph having a single vertex, and one edge for each element of $X$?}]
+	\item Describe the \emph{free magma} on a set $X$, recalling that a \emph{magma} is just a set with a function $f : M \times M \to M$ with no further property whatsoever. [Hint (highlight the following lines on a pdf viewer): \textcolor{white}{use a recursive definition: starting from the set $M_1 = X$, add all parenthesisations of elements of $X$, i.e. form the set $M_n := \sum_{p=1}^{n-1} M_p \times M_{n-p}$; define an operation on $FX := \coprod_{n\ge 0} M_n$ and prove the universal property.}]
+	Why the following snippet of code,
+	\begin{minted}{haskell}
+-- prints the different parenthesisations of a tuple of n elements
+fMag :: Integer -> [String]
+fMag 1 = ["*"]
+fMag 2 = ["(**)"]
+fMag n = concat 
+  [ concat [ map (x ++) (fMag (n-i)) 
+  | x <- fMag i]
+  | i <- [1..(n-1)]
+  ]
+	\end{minted}
+	solves the problem?
+	\item (\(\star\)) Describe coproducts in the category of groups:
+	      \begin{itemize}
+		      \item Given two groups \(G,H\), define \(G\coprod H\) as follows (and denote it $G*H$): the set of elements of \(G *H\) is the set of all words \(x_1\cdots x_n\) of elements of \(G \cup H\), that have been suitably \emph{reduced} in such a way that (a) every occurrence of the identity \(1_G, 1_H\) is removed, and (b) every pair of contiguous elements \(x_ix_{i+1}\) that belong to the same set have been replaced by their product in \(G\) or \(H\). Show that every element of the resulting set can be expressed as a reduced word
+		            \[g_1h_1g_2h_2\cdots g_\ell h_\ell\]
+		            where \(g_i : G, h_i : H\) and \(\ell \ge 0\). The group operation on \(G*H\) is defined by concatenation of words, followed by reduction; the identity element is the empty sequence, i.e. the reduction of either the word \((1_G)\) or the word \((1_H)\).
+		      \item Show that if \(G=\langle S\mid R\rangle\) and \(H=\langle S'\mid R'\rangle\) are presentations by generator/relations of \(G,H\) respectively, then \(G*H=\langle S\cup S'\mid R\cup R'\rangle\).
+		      \item Let \(C_2 = \langle x\mid x^2\rangle\) be the cyclic group of order \(2\). Show that the group \(C_2 * C_2\) is infinite. Can a free product of groups \(G*H\) be finite?
+	      \end{itemize}
+	\item (\(\star\)) The \emph{mathematical induction principle} says that
+	      \[\textstyle
+		      \big(Q0\land \bigwedge_{i\le n} Qi\Rightarrow Q(i+1)\big)\Rightarrow \bigwedge_{n : \mathbb N} Qn
+	      \]
+	      (in words, if \(Q : \mathbb N \to \{0,1\}\) is a proposition, \(Q0\) is true, and \(Qn \Rightarrow Q(n+1)\), then \(Qn\) is true for all \(n : \mathbb N\). Is there a way to state the induction principle in terms of the universal property of \(\mathbb N\)? [Hint (highlight the following lines on a pdf viewer): \textcolor{white}{use the universal property of $\mathbb N$ to show that if $S\subseteq \mathbb N$ is a nonempty subset such that the inclusion $i : S \hookrightarrow \mathbb N$ is a morphism in $\sf Dyn$, then $S=\mathbb N$. Deduce the induction principle using a suitable $S_Q$ obtained from the property $Q$.}]
+\end{enumerate}
+\normalsize
+\end{document}
