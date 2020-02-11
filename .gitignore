@@ -1,6 +1,4 @@
 _minted*
+*.hi
+*.o
 *.tex
-MAKE
-
-!*.pdf
-!*.hs
