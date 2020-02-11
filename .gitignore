@@ -3,3 +3,4 @@ _minted*
 *.o
 *.tex
 MAKE
+layout/
