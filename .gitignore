@@ -2,3 +2,4 @@ _minted*
 *.hi
 *.o
 *.tex
+MAKE
