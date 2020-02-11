@@ -2,9 +2,13 @@
 
 case "$1" in
 "3")
-latexmk -pdf -pvc -shell-escape week3;;
+latexmk -pdf -shell-escape week3/week3.tex
+rm *.log *.fls *.out *.toc *.aux *.fdb_latexmk
+mv week3.pdf week3;;
 "4")
-latexmk -pdf -pvc -shell-escape week4;;
+latexmk -pdf -shell-escape week4/week4.tex
+rm *.log *.fls *.out *.toc *.aux *.fdb_latexmk
+mv week4.pdf week4;;
 "34")
 latexmk -pdf -shell-escape week3
 latexmk -pdf -shell-escape week4;;

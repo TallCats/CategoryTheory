@@ -1,0 +1,6 @@
+_minted*
+*.tex
+MAKE
+
+!*.pdf
+!*.hs
