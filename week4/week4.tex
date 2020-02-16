@@ -25,12 +25,8 @@
 
 \maketitle
 \tableofcontents
-
-\subsection{Functors: morphisms of categories}
-
-Si prende un foglio di esercizi di data61 che ti costringono a implementare istanze di \verb|Functor| per aggeggi
-di uso comune (le liste, gli alberi,  \verb|Maybe|, \verb|Either| etcetera) e fargli vedere prima come si scrive in hs, e poi come
-si scrive in CT, per far loro capire che sono la stessa cosa
+\section{Functors}
+\subsection{Morphisms of categories}
 \begin{definition}[Functor]
 	Let $\clC$ and $\clD$ be two categories; we define a \emph{functor} $F :\clC\to \clD$ as a pair $(F_0, F_1)$ consisting of the following data:
 	\begin{itemize}
@@ -60,8 +56,10 @@ If $F : \clC \to \clD$ is a functor, it corresponds to a data constructor \mil{f
 <$> :: (a -> b) -> f a -> f b
 \end{minted}
 If you recall how the associativity of \mil{->} works, it is evident that this is a function from the type of maps \mil{a -> b} to the type of maps \mil{f a -> f b}; or rather, this is a function that given a function \mil{u :: a -> b}, and an ``element'' of type \mil{f a}, yields an element \mil{x :: f b}.
+\begin{remark}
+	There is a category whose objects are (small) categories, and whose morphisms $\clC\to \clD$ are functors. The \emph{identity} functor $1_{\clC} : \clC \to \clC$ of a category $\clC$, and the composition $G\circ F : \clA \xrightarrow{F} \clB \xrightarrow{G} \clC$ of two functors are defined in the obvious way; all category axioms follow.\footnote{The reader might now wonder if there is a category of Haskell types; unfortunately there is no such thing, but better languages have a better behaviourin this respect (for example \mil{Agda} or \mil{Idris}).}
+\end{remark}
 \subsection{Examples of functors}
-
 As you can imagine, both Haskell and mathematics are crawling with examples of functors;
 \begin{example}[Examples of functors]\leavevmode
 	\begin{enumerate}
@@ -103,13 +101,28 @@ Searching a formalisation of this intuitive pictorial idea leads to the followin
 \end{definition}
 \subsubsection{Diagrams, everywhere}
 \begin{itemize}
-\item An object is a diagram
-\item A morphism is a diagram
-\item A chain is a diagram
-\item A span is a diagram
-\item A cospan is a diagram
-\item A square is a diagram
-\item A cube is a diagram
+\item An object is a diagram: the terminal object in the category of categories is the category 
+\[[0] = \Big\{ 
+\vcenter{\xymatrix{
+	\bullet \ar@(ur,dr)^1
+}}\Big\}\]
+A functor $C : \textbf{1} \to \clC$ consists of an object of $\clC$.
+\item An arrow is a diagram: let 
+\[[1] = \Big\{ \vcenter{\xymatrix{0 \ar[r] & 1}} \Big\}\]
+be the category with two objects $0,1$ and a single nonidentity morphism $0\to 1$. A functor $f : \textbf{2} \to \clC$ consists of two objects $X_i = f(i)$ for $i=0,1$, and a morphism $X_0\to X_1$.
+\item A chain is a diagram: let $n>2$ be a positive integer. Let 
+\[[n] = \Big\{ \vcenter{\xymatrix{0 \ar[r] & 1 \ar[r] & \cdots \ar[r] & n}} \Big\}\] be the category with exactly $n+1$ objects and exactly one nonidentity arrow $j-1\to j$ for $j=1,\dots,n$. A functor $c : [n] \to \clC$ consists of a tuple of objects $X_0 \to X_1 \to \cdots \to X_n$, and morphisms $X_{j-1}\to X_j$ for $j=1,\dots,n$. 
+\item A span is a diagram: let 
+\[
+\clS = \left\{ \vcenter{\xymatrix@R=4mm@C=4mm{
+	&0\ar[dr]\ar[dl]& \\
+	1 && 2
+}}	\right\}
+\] be the category with three objects and arrows as depicted. A functor $F : \clS \to \clC$ is a diagram of the same shape, labeled in the same way\dots
+
+So, you get the idea. Define a \emph{cospan} in $\clC$ to be a functor $F$ with domain the opposite category $\clS^\opp$.
+\item A square is a diagram:
+\item A cube is a diagram:
 \item A diagram is a diagram is a diagram,\dots, is a diagram
 \end{itemize}
 \subsection{General definition of limits and colimits}
@@ -197,5 +210,11 @@ Of course, a straightforward dualisation of diagram \eqref{itsalim} yields the d
 \subsubsection{in posets and Pos}
 
 \subsubsection{in Set, and other algebraic categories}
+\subsubsection{Exercises}
+Exercises denoted with a star symbol are supposed to be difficult. Don't be put off, and enjoy!
 
+\footnotesize
+\begin{enumerate}
+	\item 
+\end{enumerate}
 \end{document}

@@ -5,6 +5,7 @@ module Product where
 all the more because it often conflicts 
 with std Prelude
 -}
+
 -- p_A
 fst :: (a, b) -> a
 fst (x, _) = x

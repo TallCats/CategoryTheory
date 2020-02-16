@@ -2,5 +2,11 @@ _minted*
 *.hi
 *.o
 *.tex
+*.out
+*.log
+*.toc
+*.fls
+*.fdb*
+*.aux
 MAKE
 layout/

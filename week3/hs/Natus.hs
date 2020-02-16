@@ -5,6 +5,7 @@ module Natus where
 all the more because it often conflicts 
 with std Prelude
 -}
+
 data N
   = Z
   | Suc N
