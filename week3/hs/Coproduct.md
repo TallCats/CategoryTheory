@@ -1,9 +1,9 @@
 ```haskell
-module CoproductUnivProp where
+module Coproduct where
 
-{- 
-!! this is not meant to be executable; 
-all the more because it often conflicts 
+{-
+!! this is not meant to be executable;
+all the more because it often conflicts
 with std Prelude
 -}
 
