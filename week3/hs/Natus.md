@@ -1,8 +1,9 @@
+```haskell
 module Natus where
 
-{- 
-!! this is not meant to be executable; 
-all the more because it often conflicts 
+{-
+!! this is not meant to be executable;
+all the more because it often conflicts
 with std Prelude
 -}
 
@@ -28,3 +29,4 @@ ackr :: N -> N -> N
 ackr Z n = plus (Suc Z) n
 ackr (Suc m) Z = ackr m (Suc Z)
 ackr (Suc m) (Suc n) = ackr m (ackr (Suc m) n)
+```

@@ -1,3 +1,4 @@
+```haskell
 module Iteratia where
 
 import Prelude hiding (iterate)
@@ -12,3 +13,4 @@ dis = take 10 $ iterate (/ 1.1) 100.0
 -- and a naive example of a non-converging one:
 dat :: [Integer]
 dat = take 10 $ iterate (+ 1) 0
+```
