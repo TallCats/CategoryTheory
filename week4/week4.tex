@@ -121,9 +121,16 @@ be the category with two objects $0,1$ and a single nonidentity morphism $0\to 1
 \] be the category with three objects and arrows as depicted. A functor $F : \clS \to \clC$ is a diagram of the same shape, labeled in the same way\dots
 
 So, you get the idea. Define a \emph{cospan} in $\clC$ to be a functor $F$ with domain the opposite category $\clS^\opp$.
-\item A square is a diagram:
-\item A cube is a diagram:
-\item A diagram is a diagram is a diagram,\dots, is a diagram
+\item A commutative square is a diagram: let 
+\[\vcenter{
+	\xymatrix{
+		(00) \ar[d]\ar[r] & (10) \ar[d]\\
+		(01) \ar[r] & (11)
+	}
+}\]
+be the category with four objects and nonidentity morphisms forming a commutative square. A functor $F$ with this domain, and values in $\clC$, consists of a commutative square of objects in $\clC$.
+\item In a similar fashion, a commutative cube is a diagram: a cube is a morphism between the square of sources and the square of targets. Draw a picture, and formalise this statement (what is the identity cube of a square? How do you compose cubes?). 
+\item A diagram is a diagram is a diagram,\dots, is a diagram: generalise to $n$-dimensional cubes.
 \end{itemize}
 \subsection{General definition of limits and colimits}
 \begin{definition}[Cone completions of $\clJ$]
