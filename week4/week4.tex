@@ -208,9 +208,48 @@ It is a good idea to unwind definitions  and  in order to obtain the more classi
 	      is commutative;
 	\item a limit for $D$ is a terminal object in the category of cones for $D$. This means that given a cone for $D$, there is a unique arrow $k$ which is a morphism of cones.
 \end{itemize}
-Of course, a straightforward dualisation of diagram \eqref{itsalim} yields the definition of a cocone, and a colimit for $D$.
+Of course, a straightforward dualisation yields the definition of a cocone, and a colimit for $D$.
 
 \subsection{Examples of limits and colimits}
+We start with a classical edge example: a terminal object is the limit of the empty diagram.
+\begin{example}
+	Let $J=\varnothing$ be the empty set; the limit of the unique diagram $D : \clJ \to \clC$ is the \emph{terminal object} of $\clC$.
+
+	The universal property exhibited by the terminal object $*$ of $\clC$ is the following: there is a unique morphism $C\to *$ for every $C\in\clC$ (with no other condition, since $\clJ$ is empty).
+\end{example}
+\begin{example}[Product]\label{ex:prod}\index{Limit!product}
+	Let $\clJ$ be a set, and $\{X_i \mid i\in \clJ\}$ a family of objects of a category $\clC$; the \emph{product} of the $\{X_i\}$'s, denoted $\prod_{i\in \clJ} X_i$, is the limit of the diagram $D : \clJ \to \clC$, when the set $\clJ$ is regarded as a discrete category.% as in \ref{catex:cin}.
+
+	The universal property exhibited by the object $\prod_{i\in \clJ} X_i$ is the following: there is a cone $\bar p = \{p_i : \prod X_j \to X_i\mid i\in \clJ\}$ such that ($\bar p(-\infty) = \prod X_j$ and) for every other cone $\{f_i : E\to X_i \mid i\in \clJ\}$ there exists a unique dotted $\bar f : E \to \prod_{i\in \clJ} X_i$ such that
+	\[
+		\vcenter{\xymatrix{		E \ar@{.>}[d]_{\bar f}\ar[dr]^{f_{\bar\imath}} & \\
+		\prod X_i \ar[r]_{p_{\bar\imath}}& X_{\bar\imath}
+		}}
+	\]
+	commutes for every $\bar\imath \in \clJ$.
+\end{example}
+\begin{example}[Pullback]\label{ex:pull}\index{Limit!pullback}
+	Let $\clJ$ be the category $0\to 2\leftarrow 1$, and $\{X_0 \to X_2 \leftarrow X_1\}$ the corresponding diagram $X : \clJ\to \clC$; the \emph{pullback} of the diagram $X$, denoted $X_0 \times_{X_2} X_1$, is the limit of $X$; the universal property exhibited by the object $X_0 \times_{X_2} X_1$ is the following: there is a cone $X_0 \xleftarrow{p_0} X_0\times_{X_2}X_1 \xrightarrow{p_1} X_1$ such that for every other cone $X_0 \xleftarrow{f_0} E \xrightarrow{f_1} X_1$ there exists a unique dotted $\langle f_0,f_1\rangle$ such that
+	\[
+		\vcenter{\xymatrix{
+		E \ar@{.>}[dr]\ar@/^1pc/[drr]^{f_0}\ar@/_1pc/[ddr]_{f_1}&& \\
+		& X_0 \times_{X_2} X_1 \ar[d]_{p_1} \ar[r]^{p_0} & X_0\ar[d]^{q_{02}} \\
+		& X_1 \ar[r]_{q_{12}}& X_2
+		}}
+	\]
+	In the same notation above, when we want to stress the dependence of the pullback from the maps $q_{02}, q_{12}$, the object is sometimes denoted as $q_{02}\times q_{12}$ instead of $X_0 \times_{X_2} X_1$. This is not a real clash of notation, as it is possible to prove that $q_{02}\times q_{12}$ is the product (in the sense of \ref{ex:prod} above) of $q_{02}, q_{12}$ regarded as objects of the slice category $\clC/X_2$.
+\end{example}
+In the category of sets, the pullback $X_0 \times_{X_2} X_1$ of a pair $f_0, f_1$ can be easily characterised as the subset of $X_0\times X_1$ made by all pairs $(x_0, x_1)$ such that $f_0(x_0)=f_1(x_1)$.
+\begin{example}[Equaliser]\label{ex:equal}\index{Limit!equaliser}
+	Let $\clJ$ be the category $0\rightrightarrows 1$, and $\{X_0 \underset{v}{\overset{u}\rightrightarrows} X_1\}$ the corresponding diagram $X : \clJ\to \clC$; the \emph{equaliser} of the diagram $X$, denoted $\text{eq}(u,v)$, is the limit of $X$; the universal property exhibited by the object is the following: there is an cone $ e : \text{eq}(u,v) \to X_0$ and for every other cone $k : E \to X_0$ there is a unique dotted $\bar k : E \to \text{eq}(u,v)$ such that
+	\[
+		\vcenter{\xymatrix{
+				\text{eq}(u,v) \ar[r]^e & X_0 \ar@<3pt>[r]^u \ar@<-3pt>[r]_v & X_1 \\
+				E\ar[ur]^k \ar@{.>}[u]_{\bar k}
+			}}
+	\]
+\end{example}
+In the category of sets, the equaliser of a pair of maps $u,v$ can be easily characterised as the subset of $X_0$ made by all elements such that $u(x)=v(x)$; it is `the largest subset of $X_0$ where $u=v$'.
 
 \subsubsection{in monoids and Mon}
 
