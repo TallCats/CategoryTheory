@@ -261,6 +261,28 @@ Exercises denoted with a star symbol are supposed to be difficult. Don't be put 
 
 \footnotesize
 \begin{enumerate}
-	\item 
+	\item Give instances of functors for \mil{(,) a}, \mil{Maybe} and \mil{Either}.
+
+	The same proof shows that the corresponding maps $\Set \to \Set$ are indeed functors.
+	\item Show that there is a ``tautological'' functor $i : \Set \to \sf Cat$ sending a set to itself, regarded as a discrete category. Given a set $A$ and a category $\clC$, show that there is a bijection between the set of functions $\pi_0\clC \to A$ and the set of functors $\clC to iA$.
+	\item $(\star)$ Let $F : \clC\to\clZ$ and $G :\clD\to\clZ$ be two functors; define the \emph{comma category} of $F,G$ as the category whose
+	\begin{itemize}
+		\item objects are arrows in $\clZ$ of the form $FC \xrightarrow{f} GD$ (more formally, an object is a tuple $(C,D, f:\clZ(FC,GD))$);
+		\item morphisms with source $f :FC \to GD$ and target $f' : FC'\to GD'$ are pairs $u:C\to C', v:D\to D'$ such that the square 
+		\[\vcenter{\xymatrix{
+			FC \ar[r]^f \ar[d]_{Fu}& GD \ar[d]^{Gv}\\
+			FC'\ar[r]_{f'} & GD'
+		}}\] is commutative. Show that $(F/G)$ is indeed a category. Show that $(F/G)$ has the following universal property: there is a commutative square 
+		\[\vcenter{\xymatrix{
+			(F/G) \ar[r]^P\ar[d]_Q &  \clZ^\to \ar[d]^J \\
+			\clC\times\clD \ar[r]_{F\times G} & \clZ\times \clZ
+		}}\]
+		and for every other commutative square 
+		\[\vcenter{\xymatrix{
+			\clX \ar[r]^H\ar[d]_K &  \clZ^\to \ar[d]^J \\
+			\clC\times\clD \ar[r]_{F\times G} & \clZ\times \clZ
+		}}\]
+		there is a unique functor $\langle H,K\rangle : \clX \to (F/G)$ such that $P\circ \langle H,K\rangle = H$ and $Q\circ \langle H,K\rangle = K$. In other words, $(F/G)$ is the \emph{pullback} of $J$ and $F\times G$.
+	\end{itemize}
 \end{enumerate}
 \end{document}
